@@ -65,5 +65,17 @@
       "geo",
       "mat"
     ]
+  },
+  {
+    "id": "c9c58a02-4d6b-11ed-a554-00155d091aa6",
+    "nome": "Thiago Santos",
+    "email": "thiagomtd2@gmail.com",
+    "senha": "12345678",
+    "tipo": "aluno",
+    "materias": [
+      "portugues",
+      "ingles"
+    ],
+    "duvidas": []
   }
 ]

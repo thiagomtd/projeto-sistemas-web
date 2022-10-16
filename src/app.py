@@ -31,30 +31,31 @@ def create_user():
                     "message": "Email já cadastrado"
                 }
             }
-        else:
-            users_data.append({
-                "id": str(uuid.uuid1()),
-                "nome": response["nome"],
-                "email": response["email"],
-                "senha": response["senha"],
-                "tipo": response["tipo"],
-                "materias": [],
-                "duvidas": []
-            })
-            # todo: sobrescrever o conteudo do json
-            return {
-                'statusCode': 201,
-                'headers': {
-                    'Access-Control-Allow-Headers': '*',
-                    'Access-Control-Allow-Origin': '*',
-                    'Access-Control-Allow-Methods': '*'
-                },
-                "body": {
-                    "message": "Criado com sucesso"
-                }
-            }
-
     file.close()
+    users_data.append({
+        "id": str(uuid.uuid1()),
+        "nome": response["nome"],
+        "email": response["email"],
+        "senha": response["senha"],
+        "tipo": response["tipo"],
+        "materias": [],
+        "duvidas": []
+    })
+    # todo: sobrescrever o conteudo do json
+    with open("user_data.json", "w") as newFile:
+        json.dump(users_data, newFile)
+        return {
+            'statusCode': 201,
+            'headers': {
+                'Access-Control-Allow-Headers': '*',
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Methods': '*'
+            },
+            "body": {
+                "message": "Criado com sucesso"
+            }
+        }
+
 
 #  Retorna todas as informações do usuario
 
@@ -162,20 +163,21 @@ def editar_materias():
 
     for user in users_data:
         if user["id"] == id:
-            # todo: Adicionar as novas materias no json
             user["materias"] = materias
-            return {
-                'statusCode': 200,
-                'headers': {
-                    'Access-Control-Allow-Headers': '*',
-                    'Access-Control-Allow-Origin': '*',
-                    'Access-Control-Allow-Methods': '*'
-                },
-                "body": {
-                    "message": "Materias adicionadas com sucesso",
-                    "materias": user["materias"]
+            with open("user_data.json", "w") as newFile:
+                json.dump(users_data, newFile)
+                return {
+                    'statusCode': 200,
+                    'headers': {
+                        'Access-Control-Allow-Headers': '*',
+                        'Access-Control-Allow-Origin': '*',
+                        'Access-Control-Allow-Methods': '*'
+                    },
+                    "body": {
+                        "message": "Materias adicionadas com sucesso",
+                        "materias": user["materias"]
+                    }
                 }
-            }
 
 # Cria uma nova duvida
 
@@ -199,20 +201,21 @@ def create_duvida():
                     "resposta": "",
                 }
             )
-            return {
-                'statusCode': 200,
-                'headers': {
-                    'Access-Control-Allow-Headers': '*',
-                    'Access-Control-Allow-Origin': '*',
-                    'Access-Control-Allow-Methods': '*'
-                },
-                "body": {
-                    "message": "Duvida adicionada com sucesso",
-                    "user": user
-                }
+    file.close()
+    with open("user_data.json", "w") as newFile:
+        json.dump(users_data, newFile)
+        return {
+            'statusCode': 200,
+            'headers': {
+                'Access-Control-Allow-Headers': '*',
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Methods': '*'
+            },
+            "body": {
+                "message": "Duvida adicionada com sucesso",
+                "user": user
             }
-
-    return
+        }
 
 #
 
@@ -230,18 +233,29 @@ def delete_duvidas():
         if user["id"] == id:
             for duvida in user["duvidas"]:
                 if duvida["duvida_id"] == duvida_id:
-
                     user["duvidas"].remove(duvida)
-
-                    return {
-                        'statusCode': 200,
-                        'headers': {
-                            'Access-Control-Allow-Headers': '*',
-                            'Access-Control-Allow-Origin': '*',
-                            'Access-Control-Allow-Methods': '*'
-                        },
-                        "body": {
-                            "message": "Duvida removida com sucesso",
-                            "user": user
+                    with open("user_data.json", "w") as newFile:
+                        json.dump(users_data, newFile)
+                        return {
+                            'statusCode': 200,
+                            'headers': {
+                                'Access-Control-Allow-Headers': '*',
+                                'Access-Control-Allow-Origin': '*',
+                                'Access-Control-Allow-Methods': '*'
+                            },
+                            "body": {
+                                "message": "Duvida removida com sucesso",
+                                "user": user
+                            }
                         }
-                    }
+            return {
+                'statusCode': 404,
+                'headers': {
+                    'Access-Control-Allow-Headers': '*',
+                    'Access-Control-Allow-Origin': '*',
+                    'Access-Control-Allow-Methods': '*'
+                },
+                "body": {
+                    "message": "Duvida não encontrada"
+                }
+            }
