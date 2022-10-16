@@ -187,11 +187,13 @@ def editar_materias():
 # Cria uma nova duvida
 
 
-@app.route("/duvidas", methods=["POST"])
+@app.route("/duvida", methods=["POST"])
 def create_duvida():
     response = json.loads(request.data)
     id = response["id"]
     duvida = response["duvida"]
+
+    print(duvida)
 
     file = open('user_data.json')
     users_data = json.load(file)
@@ -200,67 +202,66 @@ def create_duvida():
         if user["id"] == id:
             user["duvidas"].append(
                 {
-                    "duvida_id": str(uuid.uuid1()),
+                    "id_duvida": str(uuid.uuid1()),
                     "pergunta": duvida["pergunta"],
                     "materia": duvida["materia"],
                     "resposta": "",
                 }
             )
-    file.close()
     with open("user_data.json", "w") as newFile:
         json.dump(users_data, newFile)
-        return {
+        data = jsonify({
             'statusCode': 200,
-            'headers': {
-                'Access-Control-Allow-Headers': '*',
-                'Access-Control-Allow-Origin': '*',
-                'Access-Control-Allow-Methods': '*'
-            },
             "body": {
                 "message": "Duvida adicionada com sucesso",
                 "user": user
             }
-        }
+        })
+
+        data.headers.add('Access-Control-Allow-Headers', '*')
+        data.headers.add('Access-Control-Allow-Origin', '*')
+        data.headers.add("Access-Control-Allow-Methods", ' *')
+        return data
 
 #
 
 
-@app.route("/duvidas", methods=["DELETE"])
-def delete_duvidas():
-    response = json.loads(request.data)
-    id = response["id"]
-    duvida_id = response["duvida_id"]
+@app.route("/duvida", methods=["DELETE"])
+def delete_duvida():
+    id = request.args["id"]
+    id_duvida = request.args["id_duvida"]
 
     file = open('user_data.json')
     users_data = json.load(file)
 
     for user in users_data:
         if user["id"] == id:
+            print(user["id"])
             for duvida in user["duvidas"]:
-                if duvida["duvida_id"] == duvida_id:
+                print(duvida)
+                if duvida["id_duvida"] == id_duvida:
                     user["duvidas"].remove(duvida)
                     with open("user_data.json", "w") as newFile:
                         json.dump(users_data, newFile)
-                        return {
+                        data = jsonify({
                             'statusCode': 200,
-                            'headers': {
-                                'Access-Control-Allow-Headers': '*',
-                                'Access-Control-Allow-Origin': '*',
-                                'Access-Control-Allow-Methods': '*'
-                            },
                             "body": {
                                 "message": "Duvida removida com sucesso",
                                 "user": user
                             }
-                        }
-            return {
+                        })
+                        data.headers.add('Access-Control-Allow-Headers', '*')
+                        data.headers.add('Access-Control-Allow-Origin', '*')
+                        data.headers.add("Access-Control-Allow-Methods", ' *')
+                        return data
+
+            data = jsonify({
                 'statusCode': 404,
-                'headers': {
-                    'Access-Control-Allow-Headers': '*',
-                    'Access-Control-Allow-Origin': '*',
-                    'Access-Control-Allow-Methods': '*'
-                },
                 "body": {
                     "message": "Duvida não encontrada"
                 }
-            }
+            })
+            data.headers.add('Access-Control-Allow-Headers', '*')
+            data.headers.add('Access-Control-Allow-Origin', '*')
+            data.headers.add("Access-Control-Allow-Methods", ' *')
+            return data

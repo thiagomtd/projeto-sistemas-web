@@ -14,14 +14,7 @@
       "Qu\u00edmica",
       "Ingl\u00eas"
     ],
-    "duvidas": [
-      {
-        "id_duvida": "",
-        "pergunta": "",
-        "reposta": "",
-        "materia": ""
-      }
-    ]
+    "duvidas": []
   },
   {
     "id": "c9c58a02-4d6b-11ed-a554-00155d091aa6",
@@ -30,9 +23,18 @@
     "senha": "12345678",
     "tipo": "aluno",
     "materias": [
-      "Hist\u00f3ria",
-      "Portugu\u00eas"
+      "Geografia",
+      "F\u00edsica",
+      "Qu\u00edmica",
+      "Ingl\u00eas"
     ],
-    "duvidas": []
+    "duvidas": [
+      {
+        "id_duvida": "43d7f640-4da8-11ed-a5ef-00155d091aa6",
+        "pergunta": "teste 00000",
+        "materia": "Matem\u00e1tica",
+        "resposta": ""
+      }
+    ]
   }
 ]
