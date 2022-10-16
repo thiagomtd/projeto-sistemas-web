@@ -1,10 +1,12 @@
-from flask import Flask, request
-import pandas as pd
+from flask import Flask, jsonify, request
 import json
 import uuid
+from flask_cors import CORS
 
 
 app = Flask(__name__)
+
+CORS(app)
 
 # Adiciona usuário
 
@@ -20,17 +22,17 @@ def create_user():
 
     for user in users_data:
         if user["email"] == email:
-            return {
+            data = jsonify({
                 'statusCode': 302,
-                'headers': {
-                    'Access-Control-Allow-Headers': '*',
-                    'Access-Control-Allow-Origin': '*',
-                    'Access-Control-Allow-Methods': '*'
-                },
                 "body": {
                     "message": "Email já cadastrado"
                 }
-            }
+            })
+            data.headers.add('Access-Control-Allow-Headers', '*')
+            data.headers.add('Access-Control-Allow-Origin', '*')
+            data.headers.add("Access-Control-Allow-Methods", '*')
+
+            return data
     file.close()
     users_data.append({
         "id": str(uuid.uuid1()),
@@ -44,17 +46,20 @@ def create_user():
     # todo: sobrescrever o conteudo do json
     with open("user_data.json", "w") as newFile:
         json.dump(users_data, newFile)
-        return {
-            'statusCode': 201,
-            'headers': {
-                'Access-Control-Allow-Headers': '*',
-                'Access-Control-Allow-Origin': '*',
-                'Access-Control-Allow-Methods': '*'
-            },
-            "body": {
-                "message": "Criado com sucesso"
+
+        data = jsonify(
+            {
+                'statusCode': 201,
+                "body": {
+                    "message": "Criado com sucesso"
+                }
             }
-        }
+        )
+        data.headers.add('Access-Control-Allow-Headers', '*')
+        data.headers.add('Access-Control-Allow-Origin', '*')
+        data.headers.add("Access-Control-Allow-Methods", ' *')
+
+        return data
 
 
 #  Retorna todas as informações do usuario
@@ -62,37 +67,38 @@ def create_user():
 
 @app.route("/user", methods=["GET"])
 def get_user():
-    response = json.loads(request.data)
-    id = response["id"]
+
+    id = request.args["id"]
 
     file = open('user_data.json')
     users_data = json.load(file)
 
     for user in users_data:
         if user["id"] == id:
-            return {
+            data = jsonify({
                 'statusCode': 200,
-                'headers': {
-                    'Access-Control-Allow-Headers': '*',
-                    'Access-Control-Allow-Origin': '*',
-                    'Access-Control-Allow-Methods': '*'
-                },
                 "body": {
                     "message": "Usuário encontrado sucesso",
                     "user": user
                 }
-            }
-    return {
+            })
+
+            data.headers.add('Access-Control-Allow-Headers', '*')
+            data.headers.add('Access-Control-Allow-Origin', '*')
+            data.headers.add("Access-Control-Allow-Methods", ' *')
+            return data
+
+    data = jsonify({
         'statusCode': 404,
-        'headers': {
-            'Access-Control-Allow-Headers': '*',
-            'Access-Control-Allow-Origin': '*',
-            'Access-Control-Allow-Methods': '*'
-        },
         "body": {
             "message": "Usuário não encontrado"
         }
-    }
+    })
+
+    data.headers.add('Access-Control-Allow-Headers', '*')
+    data.headers.add('Access-Control-Allow-Origin', '*')
+    data.headers.add("Access-Control-Allow-Methods", ' *')
+    return data
 
 #  Realiza login
 
@@ -166,18 +172,17 @@ def editar_materias():
             user["materias"] = materias
             with open("user_data.json", "w") as newFile:
                 json.dump(users_data, newFile)
-                return {
+                data = jsonify({
                     'statusCode': 200,
-                    'headers': {
-                        'Access-Control-Allow-Headers': '*',
-                        'Access-Control-Allow-Origin': '*',
-                        'Access-Control-Allow-Methods': '*'
-                    },
                     "body": {
                         "message": "Materias adicionadas com sucesso",
                         "materias": user["materias"]
                     }
-                }
+                })
+                data.headers.add('Access-Control-Allow-Headers', '*')
+                data.headers.add('Access-Control-Allow-Origin', '*')
+                data.headers.add("Access-Control-Allow-Methods", ' *')
+                return data
 
 # Cria uma nova duvida
 
